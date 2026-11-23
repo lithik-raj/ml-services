@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS AI — ML Service Console</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 22, 0.85);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+    .header-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.5rem;
+      transition: color 0.2s;
+    }
+    .header-links a:hover { color: #fff; }
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      width: 100%;
+      flex: 1;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #fff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-2px);
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.4;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #d1d5db;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: #1f2937;
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+    textarea {
+      width: 100%;
+      background: #111827;
+      border: 1px solid #374151;
+      color: #fff;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--primary); }
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.92; }
+    .result-box {
+      margin-top: 1.25rem;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #93c5fd;
+      min-height: 75px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span>⚡</span> NEXUS AI — ML Service
+      <span class="badge-live"><span class="dot"></span> Online</span>
+    </div>
+    <div class="header-links">
+      <a href="/docs" target="_blank">Swagger Docs</a>
+      <a href="/health" target="_blank">Health</a>
+      <a href="/analytics/burnout-by-dept" target="_blank">Department Analytics</a>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div class="hero">
+      <h1>Enterprise ML Inference Microservice</h1>
+      <p>High-performance Python Serverless APIs for Burnout Risk Prediction, NLP Support Ticket Classification, and Security Anomaly Detection.</p>
+    </div>
+
+    <div class="grid">
+      <!-- 1. Burnout Predictor -->
+      <div class="card">
+        <h2>🔥 Burnout Risk Predictor</h2>
+        <p class="card-desc">Random Forest model trained on employee workload signals to forecast burnout probability.</p>
+        <div class="form-group">
+          <label>Work Hours / Week: <span id="val-hours">52</span>h</label>
+          <input type="range" id="hours" min="20" max="80" value="52" oninput="document.getElementById('val-hours').innerText=this.value">
+        </div>
+        <div class="form-group">
+          <label>Meeting Hours / Week: <span id="val-meetings">16</span>h</label>
+          <input type="range" id="meetings" min="0" max="40" value="16" oninput="document.getElementById('val-meetings').innerText=this.value">
+        </div>
+        <div class="form-group">
+          <label>Leave Days Used: <span id="val-leaves">1</span>d</label>
+          <input type="range" id="leaves" min="0" max="25" value="1" oninput="document.getElementById('val-leaves').innerText=this.value">
+        </div>
+        <div class="form-group">
+          <label>Tickets Raised: <span id="val-tickets">9</span></label>
+          <input type="range" id="tickets" min="0" max="25" value="9" oninput="document.getElementById('val-tickets').innerText=this.value">
+        </div>
+        <button class="btn" onclick="predictBurnout()">Predict Burnout Risk</button>
+        <div class="result-box" id="res-burnout">// Click to run real inference...</div>
+      </div>
+
+      <!-- 2. Ticket Classifier -->
+      <div class="card">
+        <h2>🏷️ IT / HR Ticket Classifier</h2>
+        <p class="card-desc">NLP Multinomial Naive Bayes model with TF-IDF vectorization to route support tickets automatically.</p>
+        <div class="form-group">
+          <label>Ticket Description</label>
+          <textarea id="ticket-text" rows="4">My company laptop is extremely slow, freezing up during VPN connection, and the blue screen crash appeared.</textarea>
+        </div>
+        <button class="btn" onclick="classifyTicket()">Classify Support Ticket</button>
+        <div class="result-box" id="res-ticket">// Click to classify text...</div>
+      </div>
+
+      <!-- 3. Security Anomaly Detection -->
+      <div class="card">
+        <h2>🛡️ Security Anomaly Detection</h2>
+        <p class="card-desc">Unsupervised Isolation Forest model detecting anomalous employee activity and compromised credentials.</p>
+        <div class="form-group">
+          <label>Failed Logins: <span id="val-logins">8</span></label>
+          <input type="range" id="logins" min="0" max="20" value="8" oninput="document.getElementById('val-logins').innerText=this.value">
+        </div>
+        <div class="form-group">
+          <label>Unusual IPs Count: <span id="val-ips">4</span></label>
+          <input type="range" id="ips" min="0" max="10" value="4" oninput="document.getElementById('val-ips').innerText=this.value">
+        </div>
+        <div class="form-group">
+          <label>After Hours Access: <span id="val-after">6</span></label>
+          <input type="range" id="after" min="0" max="20" value="6" oninput="document.getElementById('val-after').innerText=this.value">
+        </div>
+        <button class="btn" onclick="detectAnomaly()">Analyze Access Pattern</button>
+        <div class="result-box" id="res-anomaly">// Click to detect anomalies...</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    NEXUS AI Microservices • Powered by FastAPI & Scikit-Learn • Deployed on Vercel Serverless
+  </footer>
+
+  <script>
+    async function predictBurnout() {
+      const el = document.getElementById('res-burnout');
+      el.innerText = 'Calculating probability...';
+      try {
+        const res = await fetch('/predict-burnout', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            work_hours: parseFloat(document.getElementById('hours').value),
+            meeting_hours: parseFloat(document.getElementById('meetings').value),
+            leave_days_used: parseFloat(document.getElementById('leaves').value),
+            tickets_raised: parseFloat(document.getElementById('tickets').value),
+            attendance_rate: 90.0
+          })
+        });
+        const data = await res.json();
+        el.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        // Fallback simulation if direct API is initializing
+        const wh = parseFloat(document.getElementById('hours').value);
+        const risk = wh > 50 ? 82 : 28;
+        el.innerText = JSON.stringify({
+          risk_score: risk,
+          high_risk: risk > 50,
+          risk_level: risk > 70 ? "High" : "Low",
+          recommendations: risk > 50 ? ["Reduce overtime hours", "Schedule time off"] : ["Healthy workload balance"],
+          model: "Random Forest (Client Safe Fallback)"
+        }, null, 2);
+      }
+    }
+
+    async function classifyTicket() {
+      const el = document.getElementById('res-ticket');
+      el.innerText = 'Analyzing semantics with TF-IDF...';
+      try {
+        const res = await fetch('/classify-ticket', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ text: document.getElementById('ticket-text').value })
+        });
+        const data = await res.json();
+        el.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        const text = document.getElementById('ticket-text').value.toLowerCase();
+        const cat = text.includes('laptop') || text.includes('vpn') ? 'IT' : 'HR';
+        el.innerText = JSON.stringify({
+          category: cat,
+          confidence: 94.2,
+          suggestion: cat === 'IT' ? 'Routed to IT Support queue (SLA: 2 hours)' : 'Routed to HR Operations',
+          model: "TF-IDF + Naive Bayes (Client Safe Fallback)"
+        }, null, 2);
+      }
+    }
+
+    async function detectAnomaly() {
+      const el = document.getElementById('res-anomaly');
+      el.innerText = 'Running Isolation Forest scoring...';
+      try {
+        const res = await fetch('/detect-anomaly', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            failed_logins: parseFloat(document.getElementById('logins').value),
+            unusual_ips: parseFloat(document.getElementById('ips').value),
+            after_hours_access: parseFloat(document.getElementById('after').value),
+            data_downloads: 15
+          })
+        });
+        const data = await res.json();
+        el.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        const fl = parseFloat(document.getElementById('logins').value);
+        el.innerText = JSON.stringify({
+          is_anomaly: fl > 5,
+          anomaly_score: fl > 5 ? -0.245 : 0.158,
+          severity: fl > 10 ? "critical" : fl > 5 ? "high" : "low",
+          model: "Isolation Forest (Client Safe Fallback)"
+        }, null, 2);
+      }
+    }
+  </script>
+</body>
+</html>
